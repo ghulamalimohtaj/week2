@@ -16,20 +16,65 @@ app.use('/public', express.static(path.join(__dirname, '/public')));
 app.use(urlencodedParser);
 app.use(bodyParser.json());
 
-//all blogs
 app.get('/', function(req, res){//0728501000
+  
   Post.find((err, posts)=>{
-    if(err){
-      console.log('Error getting post');
-    }
-    console.log(posts);
-    //return index page
-    res.render('index', {
-      posts: posts
-    })
+      if(err){
+        console.log('Error getting post');
+      }
+      console.log(posts);
+      res.render('index', {
+        posts: posts
+      })
   })
 });
 
+
+
+// route for adding posts
+app.get('/post/create', function(req,res) {
+  res.render('add');
+});
+app.put('/post/edit/:id', function(req,res) {
+ Post.findByIdAndUpdate(req.params.id,req.body,{useFindAndModify:false})
+  .then(data=>{
+      if(!data){
+          res.status(404).send({message:"could not update"})
+      }else{
+        console.log('ID: '+req.params.id +' was updated');
+        res.redirect('/');
+      }
+  })
+  .catch(error=>{
+      res.status(500).send({message:"Error!!!"})
+  })
+});
+app.delete('/post/delete/:id', function(req,res) {
+  Post.findByIdAndDelete(req.params.id, function(err,docs) {
+    if(err){
+      console.log(err);
+    }else{
+      res.redirect('/');
+    }
+  });
+});
+app.get("/post/:id/edit", async(req,res)=>{
+  Blog.findByIdAndUpdate(id,req.body,{useFindAndModify:false})
+  .then(data=>{
+      if(!data){
+          res.status(404).send({message:"could not update"})
+      }else{
+          res.redirect('/');
+      }
+  })
+  .catch(error=>{
+      res.status(500).send({message:"Error!!!"})
+  })
+});
+
+app.get('/post/edit', function(req,res) {
+  res.send('hello');
+});
 //find a specific post
 app.get('/post/:id', function(req,res) {
   Post.findById(req.params.id,function(err,post) {
@@ -39,27 +84,13 @@ app.get('/post/:id', function(req,res) {
 });
 
 
-//editing posts
-app.put('/post/edit/:id', function(req,res) {
-  Post.findByIdAndUpdate(req.params.id,req.body,{useFindAndModify:false})
-   .then(data=>{
-       if(!data){
-           res.status(404).send({message:"could not update"})
-       }else{
-         console.log('ID: '+req.params.id +' was updated');
-         res.redirect('/');
-       }
-   })
-   .catch(error=>{
-       res.status(500).send({message:"Error!!!"})
-   })
- });
- 
 
-// route for adding posts
-app.get('/post/create', function(req,res) {
-  res.render('add');
+app.delete('/:id', function(req,res) {
+  console.log(req.pamars.id);
 });
+// post data coming from add page
+
+
 
 app.get('/about', function(req, res){
   res.render('about')
@@ -70,6 +101,25 @@ app.get('/contact', function(req, res){
 });
 
 
+
+//simple adding document.
+app.post('/create', (req, res)=>{
+  var post = new Post({
+    title: req.body.title,
+    body: req.body.blog,
+    author: req.body.author,
+    date: new Date()
+  })
+
+  post.save((err, post)=>{
+      if(err){
+        console.log(err);
+      }
+
+      console.log(post);
+      res.redirect('/');
+  })
+})
 
 
 
