@@ -16,7 +16,7 @@ app.use('/public', express.static(path.join(__dirname, '/public')));
 app.use(urlencodedParser);
 app.use(bodyParser.json());
 
-app.get('/', function(req, res){//0728501000
+app.get('/', function(req, res){
   
   Post.find((err, posts)=>{
       if(err){
