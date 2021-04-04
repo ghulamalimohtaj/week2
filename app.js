@@ -38,6 +38,24 @@ app.get('/post/:id', function(req,res) {
   })
 });
 
+
+//editing posts
+app.put('/post/edit/:id', function(req,res) {
+  Post.findByIdAndUpdate(req.params.id,req.body,{useFindAndModify:false})
+   .then(data=>{
+       if(!data){
+           res.status(404).send({message:"could not update"})
+       }else{
+         console.log('ID: '+req.params.id +' was updated');
+         res.redirect('/');
+       }
+   })
+   .catch(error=>{
+       res.status(500).send({message:"Error!!!"})
+   })
+ });
+ 
+
 // route for adding posts
 app.get('/post/create', function(req,res) {
   res.render('add');
