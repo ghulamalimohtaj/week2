@@ -31,8 +31,12 @@ app.get('/', function(req, res){//0728501000
 });
 
 //find a specific post
-
-
+app.get('/post/:id', function(req,res) {
+  Post.findById(req.params.id,function(err,post) {
+    res.render('show',
+    {post:post})
+  })
+});
 
 app.get('/about', function(req, res){
   res.render('about')
