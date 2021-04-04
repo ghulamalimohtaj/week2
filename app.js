@@ -38,6 +38,11 @@ app.get('/post/:id', function(req,res) {
   })
 });
 
+// route for adding posts
+app.get('/post/create', function(req,res) {
+  res.render('add');
+});
+
 app.get('/about', function(req, res){
   res.render('about')
 });
